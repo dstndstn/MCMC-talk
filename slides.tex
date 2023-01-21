@@ -1,0 +1,86 @@
+\pdfobjcompresslevel=1
+\documentclass{beamer}
+\usepackage{pdfpages}
+\usepackage{mathtools}
+%\usepackage{amsmath}
+\usepackage{tikz}
+%\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,placments,fit}
+\usetikzlibrary{arrows.meta,decorations.pathmorphing,backgrounds,positioning,fit}
+
+\newcommand{\dfmpage}[1]{
+{
+\setbeamercolor{background canvas}{bg=}
+\includepdf[pages=#1]{dfm.pdf}
+}
+}
+
+\input{header}
+\usefonttheme[onlymath]{serif}
+\usepackage{multimedia} 
+
+\newcommand{\niceurl}[1]{\mbox{\href{#1}{\textsl{#1}}}}
+
+\title{Markov Chain Monte Carlo}
+\author{Dustin Lang \\
+Perimeter Institute for Theoretical Physics}
+\date{Symmetries Graduate School, 2023-01-23 \\
+  \vspace{1em}
+Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc1}}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\dfmpage{1}
+
+\dfmpage{11}
+\dfmpage{13}
+\dfmpage{14}
+%\dfmpage{16}
+
+\begin{frame}{Why we often need MCMC}
+  \begin{itemize}
+  \item We want to put \alert{constraints on parameters} of a physical model
+    \alert{based on observations}
+  \item constraints = posterior $= p( \textrm{parameters} | \textrm{data} )$ \\
+    %\hspace{3em}
+    \small{(``The stellar mass of the Andromeda galaxy is $10 \pm 2 \times 10^{10} \textrm{M}_{\odot}$'')}
+  \item $\propto \textrm{prior} \times \textrm{likelihood}$
+  \item $\propto p( \textrm{parameters} ) \times p( \textrm{data} | \textrm{parameters} )$
+  %\item We've seen examples with \alert{linear models} and \alert{Gaussian} likelihoods
+  %\item \cdots which can be solve using linear algebra
+  \item Real-life models and likelihoods are often complex
+  \item $\ldots$ so the resulting \alert{constraints} have complicated distributions (not Gaussians!)
+    %\item We want to be able to \alert{marginalize} over ``nuisance'' parameters
+  \item $\ldots$ but we can represent them with \alert{samplings}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Samplings to represent constraints - examples}
+  \includegraphics[height=0.5\textwidth]{corner}
+  \begin{itemize}
+  \item From https://arxiv.org/abs/1910.04899
+  \item With a sampling: \alert{Marginalize} over a parameter by projecting it out
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Samplings to represent constraints - examples}
+  \includegraphics[height=0.5\textwidth]{banana}
+  \begin{itemize}
+    \item From https://arxiv.org/abs/1611.00036
+  \end{itemize}
+\end{frame}
+
+\dfmpage{30-45}
+
+%\dfmpage{16}
+
+\begin{frame}
+\end{frame}
+
+\dfmpage{46-54}
+
+\end{document}
+

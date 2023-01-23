@@ -50,7 +50,7 @@ Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.
   \only<1>{
   \item Perlmutter+1999 (\niceurl{https://arxiv.org/abs/astro-ph/9812133})
   \item Measured the observed peak brightnesses of a sample of type-1a supernovae (in astronomer ``mag'' units), and the redshifts (``z'') of the supernova host galaxies
-  \item $\textrm{mag} = \textrm{mag}_{\textrm{intrinsic}} + \textrm{luminosity\_distance}(z, \textrm{parameters}) + \epsilon$
+  \item $\textrm{mag} = \textrm{mag}_{\textrm{intrinsic}} + \textrm{luminosity\_distance}(z, \textrm{parameters})$% + \epsilon$
   }%
   \only<2>{
   \item Generative model: \\
@@ -84,8 +84,8 @@ Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.
 
 \begin{frame}{Why we often need MCMC}
   \begin{itemize}
-  \item We want to put \alert{constraints on the parameters} of a physical model
-    \alert{based on observations}
+  %\item We want to put \alert{constraints on the parameters} of a physical model
+  %  \alert{based on observations}
   % \item constraints = posterior $= p( \textrm{parameters} | \textrm{data} )$ \\
   %   %\hspace{3em}
   %   %\small{(``The stellar mass of the Andromeda galaxy is $10 \pm 2 \times 10^{10} \textrm{M}_{\odot}$'')}
@@ -98,7 +98,7 @@ Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.
   \item $\ldots$ so the resulting \alert{constraints} have complicated distributions (not Gaussians!)
     %\item We want to be able to \alert{marginalize} over ``nuisance'' parameters
   \item $\ldots$ but we can represent them with \alert{samplings}
-  \item MCMC is good for drawing samples from probability distributions
+  \item MCMC is used for drawing samples from probability distributions
         that we can compute numerically but cannot solve analytically
   \end{itemize}
 \end{frame}
@@ -262,16 +262,13 @@ def mcmc(logprob_func, propose_func, initial_pos, nsteps):
 %
 %
 
-\begin{frame}{Conclusions}
+
+\begin{frame}{Practicalities}
 \begin{itemize}
-\item MCMC remains an essential tool for probabilistic inference
-\item For science: lets us contrain model parameters based on data (Bayesian inference)
-\item Beguilingly simple algorithm (with some pitfalls!)
-\item A good proposal function can be hard to come up with! (and is essential for good performance!)
-\item MCMC has beautiful theoretical guarantees... as compute time $\to \infty$
+\item How do I choose a proposal distribution?
+\item How many steps do I have to take?
 \end{itemize}
 \end{frame}
-
 
 \dfmpage{46-54}
 
@@ -279,11 +276,10 @@ def mcmc(logprob_func, propose_func, initial_pos, nsteps):
 
 \begin{frame}{A connection to symmetries}
 \begin{itemize}
-\item In Metropolis--Hastings MCMC, it's a major issue that you have to choose a good
-proposal distribution---which requires a large number of tuning
-parameters as the dimensionality of your problem increases
-\item You can see this as a lack of \alert{symmetry} in the algorithm---the algorithm is
-very sensitive to the parameterization of the problem
+\item In Metropolis--Hastings MCMC, the \emph{proposal distribution} needs
+\alert{tuning parameters}, especially as dimensionality increases
+\item Can be seen as a lack of \alert{symmetry} in the algorithm---the algorithm is
+sensitive to the parameterization of the problem
 \item For example, it's not invariant to an \alert{affine} transformation
 \item \alert{Next lecture}, I'll show you an alternative algorithm that \alert{does} have affine invariance
 \end{itemize}
@@ -292,6 +288,47 @@ very sensitive to the parameterization of the problem
 \end{center}
 \end{frame}
 
+
+\begin{frame}{How many samples do I need?}
+\begin{itemize}
+\item Burn-in --- skip the first $N$ samples
+\item \emph{Has my chain converged?}
+\item MCMC produces \alert{correlated} samples, so
+  \begin{itemize}
+  \item How correlated are my samples?
+  \onslide<2->{
+  \begin{itemize}
+  \addtolength{\itemsep}{0.5ex}%
+  \item Can measure the \emph{autocorrelation time} $\tau$
+  \item Keep $1/\tau$ of the MCMC samples
+  \item eg \niceurl{https://github.com/dfm/acor}
+  \end{itemize}
+  }
+  \item How many uncorrelated samples do I need?
+  \onslide<3->{
+  \begin{itemize}
+  \addtolength{\itemsep}{0.5ex}%
+  \item No easy general answer to this question!
+  \item ``How many can you afford?''
+  \end{itemize}
+  }
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+\dfmpage{29}
+
+
+\begin{frame}{Conclusions}
+\begin{itemize}
+  \addtolength{\itemsep}{0.5ex}%
+\item MCMC remains an essential tool for probabilistic inference
+\item For science: lets us contrain model parameters based on data (Bayesian inference)
+\item Beguilingly simple algorithm, but difficult practicalities %(with some pitfalls!)
+%\item A good proposal function can be hard to come up with! (and is essential for good performance!)
+\item MCMC has beautiful theoretical guarantees... as compute time $\to \infty$
+\end{itemize}
+\end{frame}
 
 
 

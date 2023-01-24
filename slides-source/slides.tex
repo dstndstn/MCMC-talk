@@ -57,9 +57,10 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
   \only<2>{
   \item Generative model: \\
    $\textrm{mag}_i = \textrm{mag}_{\textrm{intrinsic}} + \textrm{luminosity\_distance}(z_i, \textrm{parameters}) + \epsilon_i$
-  \item Probability of data given a model (``likelihood''): \\
-   \small{$p(\{ \textrm{mag}_i \} \,|\, \textrm{params}) = \prod_i \textrm{Gaussian}(\textrm{mag}_i \,|\, \mu = f(z_i, \textrm{params}), \sigma_i^2)$}
-  \item $p(\textrm{mag}_i \,|\, \Omega_M, \Omega_{\Lambda} ) = \mathcal{N}(\textrm{mag}_i \,|\, \textrm{mag}_{\textrm{int}} + D_L(z_i, \Omega_M, \Omega_{\Lambda}), \sigma_i^2)$
+  \item Probability of a data point given a model (``likelihood''): \\
+   \small{$p(\textrm{mag}_i \,|\, \textrm{params}) = \textrm{Gaussian}(\textrm{mag}_i \,|\, \mu = f(z_i, \textrm{params}), \sigma_i^2)$}
+   \item Probability of whole data set given a model: \\
+  $p( \{ \textrm{mag}_i \} \,|\, \Omega_M, \Omega_{\Lambda} ) = \prod_i \mathcal{N}(\textrm{mag}_i \,|\, \textrm{mag}_{\textrm{int}} + D_L(z_i, \Omega_M, \Omega_{\Lambda}), \sigma_i^2)$
   }%
   \only<3>{
   \item Use Bayes' theorem to convert data likelihoods into contraints on the model parameters $\theta = \{ \Omega_M, \Omega_{\Lambda} \}$
@@ -79,6 +80,7 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 
 \begin{frame}{An example}
   \begin{itemize}
+    \item Then they ran MCMC...
     \item Resulting parameter constraints (blue ellipse):
   \end{itemize}
   \includegraphics[height=0.6\textwidth]{pm-constraints}

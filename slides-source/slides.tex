@@ -9,6 +9,8 @@
 
 \usepackage{minted}
 
+\usepackage[normalem]{ulem}
+
 %\usepackage[wby]{callouts}
 
 \newcommand{\dfmpage}[1]{
@@ -27,7 +29,7 @@
 \title{Markov Chain Monte Carlo}
 \author{Dustin Lang \\
 Perimeter Institute for Theoretical Physics}
-\date{Symmetries Graduate School, 2023-01-23 \\
+\date{\sout{Symmetries Graduate School, 2023-01-23} \\ PSI Numerical Methods, 2023-01-24 \\
   \vspace{1em}
 Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc1} \\
   \vspace{1em}
@@ -38,6 +40,19 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 \begin{frame}
 \titlepage
 \end{frame}
+
+\begin{frame}{Before we begin...}
+\begin{itemize}
+\item I made a mistake in describing how to interpret the Jack-knife results!
+\item I said you can take the jack-knife samples ${ b_i, m_i }$ and just compute their mean and variance
+\item Mean: okay
+\item Variance: NOPE
+\item Should be: \\
+\[ \sigma_m^2 = \frac{\mathbf{N}}{N-1} \sum_i^N (m_i - m_{\textrm{jack}})^2 \] \\
+\item \emph{i.e.}, extra factor of $N$ on the variance!
+\end{itemize}
+\end{frame}
+
 
 \dfmpage{1}
 

@@ -1,0 +1,112 @@
+% fonts p14; 18.2.3
+% Futura font
+
+% Cambridge, Copenhagen, JuanLesPins, Luebeck, Malmoe, Marburg,
+% Montpellier, PaloAlto, Singapore
+
+% colortheme beaver, dolphin
+
+% Copyright 2004 by Till Tantau <tantau@users.sourceforge.net>.
+%
+% In principle, this file can be redistributed and/or modified under
+% the terms of the GNU Public License, version 2.
+%
+% However, this file is supposed to be a template to be modified
+% for your own needs. For this reason, if you use this file as a
+% template and not specifically distribute it as part of a another
+% package/program, I grant the extra permission to freely copy and
+% modify this file as you see fit and even to delete this copyright
+% notice. 
+
+\mode<presentation> {
+  \usetheme{Malmoe}
+  \usecolortheme{beaver}
+  \setbeamercovered{transparent}
+  \setbeamertemplate{navigation symbols}{{\small\insertpagenumber}}
+%{{\normalsize\insertframenumber}}
+  \setbeamertemplate{footline}{%
+    \leavevmode%
+    \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=0.5ex,dp=1.125ex,leftskip=.3cm,rightskip=.3cm plus1fil]{title in head/foot}%
+    \end{beamercolorbox}}%
+    \vskip0pt%
+  }
+  \setbeamertemplate{headline}{% %split theme}
+  \leavevmode%
+    \begin{beamercolorbox}[wd=.3\paperwidth,ht=2.5ex,dp=1.125ex]{section in head/foot}%
+      \insertsectionnavigationhorizontal{.3\paperwidth}{\hskip0pt plus1filll}{}%
+  \end{beamercolorbox}%
+  \begin{beamercolorbox}[wd=.7\paperwidth,ht=2.5ex,dp=1.125ex]{subsection in head/foot}%
+    \insertsubsectionnavigationhorizontal{.7\paperwidth}{}{\hskip0pt plus1filll}%
+  \end{beamercolorbox}%
+  }
+  %\setbeamersize{sidebar width right=2ex}
+  %{\usebeamercolor{sidebar}}
+  %\setbeamertemplate{sidebar canvas right}{f \insertframenumber}
+  %\insertpagenumber
+}
+
+\usepackage[english]{babel}
+\usepackage[latin1]{inputenc}
+\usepackage{helvet}
+\usepackage{xspace}
+% Or whatever. Note that the encoding and the font should match. If T1
+% does not look nice, try deleting the line with the fontenc.
+%\usepackage[T1]{fontenc}
+\usepackage[normalem]{ulem}
+\usepackage{calc}
+\usepackage{verbatim}
+\usepackage{multirow}
+\usepackage{dcolumn}
+\usepackage{multimedia} 
+%\usepackage{amsbsy}
+\usepackage{amsmath}
+
+\newcommand{\arxiv}[1]{\href{http://arxiv.org/abs/#1}{arXiv:#1}}
+\newcommand{\etal}{\textit{et al.~}}
+\newcommand{\snr}[1]{\mathbb{SN}(#1)}
+
+
+\graphicspath{{figs-slides/}{figs-techreport/}}
+
+\newcommand{\an}{\emph{Astrometry.net}\xspace}
+\newcommand{\libkd}{\emph{libkd}\xspace}
+\newcommand{\kdtree}{$kd$-tree}
+\newcommand{\antoc}{Astrometry.net\xspace}
+\newcommand{\eg}{\emph{eg}}
+
+% holmes
+\newcommand{\light}[1]{{\color{gray}#1}}
+
+\newcommand{\paramvector}[1]{\boldsymbol{#1}}
+\newcommand{\pointing}{\paramvector{\alpha}}
+\newcommand{\fovpars}{\paramvector{\Omega}}
+\newcommand{\orbitpars}{\paramvector{\omega}}
+\newcommand{\hyperpars}{\paramvector{\theta}}
+\newcommand{\position}{\paramvector{x}}
+\newcommand{\velocity}{\paramvector{v}}
+\newcommand{\uniform}{\mathrm{uniform}}
+\newcommand{\tmin}{t_\mathrm{min}}
+\newcommand{\tmax}{t_\mathrm{max}}
+\newcommand{\pgood}{p_\mathrm{good}}
+\newcommand{\pempirical}{p_\mathrm{emp}}
+\newcommand{\pemp}{\pempirical}
+\newcommand{\exif}{\mathrm{EXIF}}
+\newcommand{\pexif}{p_\exif}
+\newcommand{\texif}{t_\exif}
+\newcommand{\pfg}{p_\mathrm{fg}}
+\newcommand{\pbg}{p_\mathrm{bg}}
+
+% commands to add more space in \itemize environments
+\newcommand{\bitmorespace}{%
+  \addtolength{\itemsep}{0.5ex}%
+  %\addtolength{\parskip}{0.5ex}%
+  %\addtolength{\parsep}{0.5ex}%
+  %\addtolength{\topsep}{0.5ex}%
+  \vspace{0.5ex}%
+}
+\newcommand{\morespace}{\addtolength{\itemsep}{1ex}}
+\newcommand{\Morespace}{\addtolength{\itemsep}{1.5ex}}
+
+
+\newcommand{\commentout}[1]{}
+

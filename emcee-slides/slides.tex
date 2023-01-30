@@ -10,6 +10,7 @@
 \usepackage{minted}
 \usepackage{animate}
 %\usepackage{movie15}
+\usepackage[export]{adjustbox}
 
 \usepackage{xmpmulti}
 
@@ -33,13 +34,12 @@
 
 \newcommand{\niceurl}[1]{\mbox{\href{#1}{\textsl{#1}}}}
 
-\title{Affine-Invariant Samplers}
+\title{emcee: An Affine-Invariant Sampler}
 \author{Dustin Lang \\
 Perimeter Institute for Theoretical Physics}
-\date{PSI Numerical Methods, 2023-01-26 \\
+\date{Symmetries Graduate School 2023-01-30 \\
   \vspace{1em}
-Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc1} \\
-And Jonathan Pritchard's slides \niceurl{https://www.imperial.ac.uk/media/imperial-college/research-centres-and-groups/astrophysics/public/icic/data-analysis-workshop/2016/NestedSampling\_JRP.pdf} \\
+Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc1}
   \vspace{1em}
 These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 }
@@ -49,35 +49,70 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 \titlepage
 \end{frame}
 
-\begin{frame}[fragile]{The MCMC Algorithm}
-\begin{scriptsize}
-\begin{minted}{julia}
-function mcmc(logprob_func, logprob_args,
-              propose_func, propose_args,
-              initial_pos, nsteps)
-    p = initial_pos
-    logprob = logprob_func(p, logprob_args)
-    chain = zeros(Float64, (nsteps, length(p)))
-    naccept = 0
-    for i in 1:nsteps
-        # propose a new position in parameter space
-        p_new = propose_func(p, propose_args)
-        # compute probability at new position
-        logprob_new = logprob_func(p_new, logprob_args)
-        # decide whether to jump to the new position
-        if exp(logprob_new - logprob) > rand()
-            p = p_new
-            logprob = logprob_new
-            naccept += 1
-        end
-        # save the position
-        chain[i,:] = p
-    end
-    return chain, naccept/nsteps
-end
-\end{minted}
-\end{scriptsize}
+\begin{frame}{Recap from last week's lecture (1)}
+\begin{itemize}
+\addtolength{\itemsep}{0.5em}
+\item Markov Chain Monte Carlo (MCMC) 
+\emph{draws samples from a probability distribution}
+when you can \emph{numerically evaluate} the probability function
+(up to a constant)
+\item Used extensively in data analysis:
+\emph{inferring} parameters of models, given observed data
+\item \emph{Usually} in a Bayesian context; the probability function we
+run MCMC on is the \emph{posterior} probability: \\
+$\textrm{posterior}(\textrm{params} | \textrm{data}) \propto$ \\
+$\quad \textrm{prior}(\textrm{params}) \times \textrm{likelihood}(\textrm{data} | \textrm{params})$
+\end{itemize}
+
+\vspace{-0.5em}
+\centering
+\includegraphics[valign=t,width=0.4\textwidth]{pm2}
+\hspace{0.1\textwidth}
+\includegraphics[valign=t,width=0.2\textwidth]{pm-constraints}
 \end{frame}
+ 
+
+\begin{frame}{Recap from last week's lecture (2)}
+\begin{itemize}
+\addtolength{\itemsep}{1em}
+\item The ``classic'' Markov Chain Monte Carlo algorithm is
+\emph{Metropolis--Hastings}, which moves a \emph{walker} or \emph{particle}
+around the \emph{state space} (\emph{model parameter space})
+\item A randomly-drawn \emph{proposed} jump gets \emph{evaluated} (by calling
+the probability function), and then \emph{accepted}, or not
+\item A big difficulty is to \emph{customize} the \emph{proposal distribution}
+to get the algorithm to work efficiently
+\end{itemize}
+
+\vspace{-0.5em}
+\centering
+\includegraphics[valign=t,page=44,width=0.4\textwidth]{dfm}
+\end{frame}
+
+
+
+% \begin{frame}[fragile]{The MCMC Algorithm}
+% \begin{scriptsize}
+% \begin{minted}{python}
+% def mcmc(logprob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      logprob = logprob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          logprob_new = logprob_func(p_new)
+%          # decide whether to jump to the new position
+%          if exp(logprob_new - logprob) > uniform_random():
+%              p = p_new
+%              logprob = logprob_new
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{scriptsize}
+% \end{frame}
 
 \begin{frame}{MCMC for model parameter inference}
   \includegraphics[height=0.8\textheight]{mcmc-results}
@@ -89,14 +124,26 @@ end
 \dfmpage{61-62}
 \dfmpage{64}
 \dfmpage{6}
-\dfmpage{70-75}
+
+%\dfmpage{70-75}
+\dfmpage{70-74}
+\dfmpage{75}
+
+% \begin{frame}
+% \begin{itemize}
+% \item Draw a uniform random number $u$
+% \item ``Stretch factor'' $z = \frac{(u + 1)^2}{2}$
+% \end{itemize}
+% \end{frame}
+
+
 %\dfmpage{79}
 
 \begin{frame}{Emcee demo}
 %\centering
 %\scalebox{0.5}{
 %}
-% DOESNOT GODDAMN WORK
+% DOESNOT WORK
 %\multiinclude[<+>][format=png,start=0,end=9,graphics={height=0.8\textheight}]{emcee/emcee}
 %\multiinclude[<+->][format=png,start=0,end=9,graphics={height=0.8\textheight}]{emcee/emcee}
 \begin{center}
@@ -162,43 +209,39 @@ end
 \end{frame}
 
 %\dfmpage{81}
-\dfmpage{106-111}
+%\dfmpage{106-111}
+\dfmpage{107-109}
 
-\begin{frame}{Nested Sampling}
+\begin{frame}{Differential Evolution move}
 \begin{itemize}
-\item An alternative to MCMC (and emcee)
-\item (Originally built for integrating the \emph{evidence})
-\item Idea: successively resample points, demanding they be above a minimum likelihood level
-\item Think of slowly raising the water level to find terrain contours
+\item \alert{emcee} allows us to use different \emph{move} types
+(different \emph{proposal} functions)
+\item The \alert{Differential Evolution} (DE) move can improve the sampling
+for multi-modal distributions
+\item DE move: randomly select \emph{two} ``helpers''
+\item Propose moving by their \alert{vector difference}
+\item (If they are from different modes, this proposes \emph{jumping between modes})
+\item Mixing in a fraction of DE moves with the regular ``Stretch'' move works well!
 \end{itemize}
 \end{frame}
 
-\jrppage{12-32}
-\jrppage{37}
-
-%\begin{frame}{Dynamic Nested Sampling}
-%  \includegraphics[height=0.6\textheight]{dynesty-1}
-%\end{frame}
-\begin{frame}{Dynamic Nested Sampling}
-  \includegraphics[height=0.6\textheight]{dynesty-2}
-\end{frame}
-
-\begin{frame}{Dynamic Nested Sampling}
-%\centering
-%\movie[showcontrols,once]{\includegraphics[width=0.4\textwidth]{gal4-01}}{gal4.mov}
-%\movie[showcontrols,once]{dynesty logo}{dynesty.gif}
-%\animategraphics[loop,width=0.6\textheight]{10}{dynesty-}{0}{79}
-%  \includemovie[height=0.6\textheight]{dynesty.gif}
-\niceurl{https://dynesty.readthedocs.io/en/stable/}
-
-\niceurl{https://chi-feng.github.io/mcmc-demo/app.html}
-\end{frame}
-
+\dfmpage{109}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-
+\begin{frame}{Summary}
+\begin{itemize}
+\addtolength{\itemsep}{0.5em}
+\item Traditional Metropolis--Hastings MCMC suffers from a \emph{lack of affine invariance} -- requires \emph{tuning parameters} that change for each specific probability function
+\item \emph{Ensemble samplers} like \alert{emcee} use the
+\emph{distribution of the walkers} to achieve \emph{affine invariance}
+\item $\to$ much easier to use, and faster sampling
+\item (Huge side effect: parallelizable!)
+\item Multi-modal distributions still hard, but \emph{DE Move} can help
+\item MCMC isn't scary!
+\end{itemize}
+\end{frame}
 
 \end{document}
 

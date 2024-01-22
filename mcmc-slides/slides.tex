@@ -27,9 +27,9 @@
 \title{Markov Chain Monte Carlo}
 \author{Dustin Lang \\
 Perimeter Institute for Theoretical Physics}
-\date{Symmetries Graduate School, 2023-01-23 \\
+\date{PSI Numerical Methods 2024 \\
   \vspace{1em}
-Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc1} \\
+Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc} \\
   \vspace{1em}
 These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 }
@@ -126,16 +126,28 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 \dfmpage{30-34}
 
 \dfmpage{35}
+
 % {
 % \setbeamercolor{background canvas}{bg=}
 % \includepdf[pages=35,pagecommand={%
 % \begin{tikzpicture}%
-% (0,0) node(x) {Hello World!};
+% (0,0) node(x) {Hello World!}
 % \end{tikzpicture}}]{dfm.pdf}
+% }
 
 \dfmpage{36-45}
 
 %\dfmpage{16}
+
+\begin{frame}{Note}
+\begin{itemize}
+\item In the previous slides, there is an unfortunate typo!  In all cases,
+\[ p(\textrm{accept}) = \min( 1, \frac{p(x)}{p(x')} \frac{q(x; x')}{q(x'; x)}) \]
+should actually be
+\[ p(\textrm{accept}) = \min( 1, \frac{p(x')}{p(x)} \frac{q(x'; x)}{q(x; x')}) \]
+That is, \alert{how good is the new place} divided by \alert{how good was the old place?}
+\end{itemize}
+\end{frame}
 
 \begin{frame}{About the name}
 \begin{itemize}
@@ -168,99 +180,212 @@ with an \href{https://en.wikipedia.org/wiki/List_of_things_named_after_Andrey_Ma
 % \end{small}
 % \end{frame}
 
+%%%%% PYTHON %%%%%
+
+% \begin{frame}[fragile]{The Algorithm (1)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(prob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      prob = prob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          # ...
+%          # compute probability at new position
+%          # ...
+%          # decide whether to jump to the new position
+%          if # ...
+%              # ...
+%              # ...
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{small}
+% \end{frame}
+% 
+% \begin{frame}[fragile]{The Algorithm (2)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(prob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      prob = prob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          prob_new = prob_func(p_new)
+%          # decide whether to jump to the new position
+%          if prob_new / prob > uniform_random():
+%              p = p_new
+%              prob = prob_new
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{small}
+% \end{frame}
+% 
+% \begin{frame}[fragile]{The Algorithm (3)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(logprob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      logprob = logprob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          logprob_new = logprob_func(p_new)
+%          # decide whether to jump to the new position
+%          if exp(logprob_new - logprob) > uniform_random():
+%              p = p_new
+%              logprob = logprob_new
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{small}
+% \end{frame}
+% 
+% \begin{frame}[fragile]{The Algorithm (4)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(logprob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      logprob = logprob_func(p)
+%      chain = []
+%      naccept = 0
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          logprob_new = logprob_func(p_new)
+%          # decide whether to jump to the new position
+%          if exp(logprob_new - logprob) > uniform_random():
+%              p = p_new
+%              logprob = logprob_new
+%              naccept += 1
+%          # save the position
+%          chain.append(p)
+%      return chain, naccept/nsteps
+% \end{minted}
+% \end{small}
+% \end{frame}
+
+
 \begin{frame}[fragile]{The Algorithm (1)}
-\begin{small}
-\begin{minted}{python}
-def mcmc(prob_func, propose_func, initial_pos, nsteps):
-     p = initial_pos
-     prob = prob_func(p)
-     chain = []
-     for i in range(nsteps):
-         # propose a new position in parameter space
-         # ...
-         # compute probability at new position
-         # ...
-         # decide whether to jump to the new position
-         if # ...
-             # ...
-             # ...
-         # save the position
-         chain.append(p)
-     return chain
+\begin{footnotesize}
+\begin{minted}{julia}
+function mcmc(prob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    prob = prob_func(p)
+    chain = []
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        # ...
+        # compute probability at new position
+        # ...
+        # decide whether to jump to the new position
+        if # ...
+            # ...
+            # ...
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain
+end
 \end{minted}
-\end{small}
+\end{footnotesize}
 \end{frame}
 
 \begin{frame}[fragile]{The Algorithm (2)}
-\begin{small}
-\begin{minted}{python}
-def mcmc(prob_func, propose_func, initial_pos, nsteps):
-     p = initial_pos
-     prob = prob_func(p)
-     chain = []
-     for i in range(nsteps):
-         # propose a new position in parameter space
-         p_new = propose_func(p)
-         # compute probability at new position
-         prob_new = prob_func(p_new)
-         # decide whether to jump to the new position
-         if prob_new / prob > uniform_random():
-             p = p_new
-             prob = prob_new
-         # save the position
-         chain.append(p)
-     return chain
+\begin{footnotesize}
+\begin{minted}{julia}
+function mcmc(prob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    prob = prob_func(p)
+    chain = []
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        p_new = propose_func(p)
+        # compute probability at new position
+        prob_new = prob_func(p_new)
+        # decide whether to jump to the new position
+        if prob_new / prob > uniform_random()
+            p = p_new
+            prob = prob_new
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain
+end
 \end{minted}
-\end{small}
+\end{footnotesize}
 \end{frame}
 
 \begin{frame}[fragile]{The Algorithm (3)}
-\begin{small}
-\begin{minted}{python}
-def mcmc(logprob_func, propose_func, initial_pos, nsteps):
-     p = initial_pos
-     logprob = logprob_func(p)
-     chain = []
-     for i in range(nsteps):
-         # propose a new position in parameter space
-         p_new = propose_func(p)
-         # compute probability at new position
-         logprob_new = logprob_func(p_new)
-         # decide whether to jump to the new position
-         if exp(logprob_new - logprob) > uniform_random():
-             p = p_new
-             logprob = logprob_new
-         # save the position
-         chain.append(p)
-     return chain
+\begin{footnotesize}
+\begin{minted}{julia}
+function mcmc(logprob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    logprob = logprob_func(p)
+    chain = []
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        p_new = propose_func(p)
+        # compute probability at new position
+        logprob_new = logprob_func(p_new)
+        # decide whether to jump to the new position
+        if exp(logprob_new - logprob) > uniform_random()
+            p = p_new
+            logprob = logprob_new
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain
+end
 \end{minted}
-\end{small}
+\end{footnotesize}
 \end{frame}
 
 \begin{frame}[fragile]{The Algorithm (4)}
-\begin{small}
-\begin{minted}{python}
-def mcmc(logprob_func, propose_func, initial_pos, nsteps):
-     p = initial_pos
-     logprob = logprob_func(p)
-     chain = []
-     naccept = 0
-     for i in range(nsteps):
-         # propose a new position in parameter space
-         p_new = propose_func(p)
-         # compute probability at new position
-         logprob_new = logprob_func(p_new)
-         # decide whether to jump to the new position
-         if exp(logprob_new - logprob) > uniform_random():
-             p = p_new
-             logprob = logprob_new
-             naccept += 1
-         # save the position
-         chain.append(p)
-     return chain, naccept/nsteps
+\begin{footnotesize}
+\begin{minted}{julia}
+function mcmc(logprob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    logprob = logprob_func(p)
+    chain = []
+    naccept = 0
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        p_new = propose_func(p)
+        # compute probability at new position
+        logprob_new = logprob_func(p_new)
+        # decide whether to jump to the new position
+        if exp(logprob_new - logprob) > uniform_random():
+            p = p_new
+            logprob = logprob_new
+            naccept += 1
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain, naccept/nsteps
+end
 \end{minted}
-\end{small}
+\end{footnotesize}
 \end{frame}
+
+
+
+
 
 %
 %
@@ -320,7 +445,7 @@ sensitive to the parameterization of the problem
 \end{itemize}
 \end{frame}
 
-\dfmpage{29}
+%\dfmpage{29}
 
 
 \begin{frame}{Conclusions}
@@ -336,14 +461,14 @@ sensitive to the parameterization of the problem
 
 
 
-\begin{frame}{This afternoon's tutorial/lab session}
-\begin{itemize}
-\item Bob Room, 3:15--4:30
-\item Time to play with MCMC yourself!
-\item We'll use Google CoLab - no need to install anything on your computer
-\item In the Python language
-\end{itemize}
-\end{frame}
+% \begin{frame}{This afternoon's tutorial/lab session}
+% \begin{itemize}
+% \item Bob Room, 3:15--4:30
+% \item Time to play with MCMC yourself!
+% \item We'll use Google CoLab - no need to install anything on your computer
+% \item In the Python language
+% \end{itemize}
+% \end{frame}
 
 
 

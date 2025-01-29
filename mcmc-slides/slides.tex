@@ -326,6 +326,7 @@ function mcmc(prob_func, propose_func, initial_pos, nsteps)
         # compute probability at new position
         # ...
         # decide whether to jump to the new position
+        # ...
         if # ...
             # ...
             # ...
@@ -352,7 +353,8 @@ function mcmc(prob_func, propose_func, initial_pos, nsteps)
         # compute probability at new position
         prob_new = prob_func(p_new)
         # decide whether to jump to the new position
-        if prob_new / prob > uniform_random()
+        ratio = prob_new / prob
+        if ratio > 1 or ratio > uniform_random()
             p = p_new
             prob = prob_new
         end
@@ -378,7 +380,8 @@ function mcmc(logprob_func, propose_func, initial_pos, nsteps)
         # compute probability at new position
         logprob_new = logprob_func(p_new)
         # decide whether to jump to the new position
-        if exp(logprob_new - logprob) > uniform_random()
+        ratio = exp(prob_new - prob)
+        if ratio > 1 or ratio > uniform_random()
             p = p_new
             logprob = logprob_new
         end
@@ -392,7 +395,7 @@ end
 \end{frame}
 
 \begin{frame}[fragile]{The Algorithm (4)}
-\begin{footnotesize}
+\begin{scriptsize}
 \begin{minted}{julia}
 function mcmc(logprob_func, propose_func, initial_pos, nsteps)
     p = initial_pos
@@ -405,7 +408,8 @@ function mcmc(logprob_func, propose_func, initial_pos, nsteps)
         # compute probability at new position
         logprob_new = logprob_func(p_new)
         # decide whether to jump to the new position
-        if exp(logprob_new - logprob) > uniform_random():
+        ratio = exp(prob_new - prob)
+        if ratio > 1 or ratio > uniform_random()
             p = p_new
             logprob = logprob_new
             naccept += 1
@@ -416,8 +420,12 @@ function mcmc(logprob_func, propose_func, initial_pos, nsteps)
     return chain, naccept/nsteps
 end
 \end{minted}
-\end{footnotesize}
+\end{scriptsize}
 \end{frame}
+
+
+
+
 
 
 

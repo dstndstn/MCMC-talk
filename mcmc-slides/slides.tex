@@ -408,8 +408,7 @@ function mcmc(logprob_func, propose_func, initial_pos, nsteps)
         # compute probability at new position
         logprob_new = logprob_func(p_new)
         # decide whether to jump to the new position
-        ratio = exp(prob_new - prob)
-        if ratio > 1 or ratio > uniform_random()
+        if exp(prob_new - prob) > uniform_random()
             p = p_new
             logprob = logprob_new
             naccept += 1

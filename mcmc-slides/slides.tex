@@ -18,6 +18,28 @@
 }
 }
 
+% DFM made a typo in the key Metropolis-Hastings acceptance probability, so patch those slides with an overlay!!
+
+\newcommand{\fixequation}{
+\AddToHookNext{shipout/foreground}{
+  \begin{tikzpicture}[overlay, remember picture]
+    %\draw[step=1cm] (0, 0) grid (10, -5);
+    \node[draw=none, fill=white, text=black, scale=1] at (6.7, -4) {%
+      $p( \textrm{accept} ) = \min \left( 1, \displaystyle\frac{p(\mathbf{x}')}{p(\mathbf{x})} \frac{q(\mathbf{x}; \mathbf{x}')}{q(\mathbf{x}'; \mathbf{x})} \right)$\hspace{1em}};
+  \end{tikzpicture}
+}
+}
+
+\newcommand{\fixequationx}{
+\AddToHookNext{shipout/foreground}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[draw=none, fill=white, text=black, scale=1] at (6.7, -5.2) {%
+      $p( \textrm{accept} ) = \min \left( 1, \displaystyle\frac{p(\mathbf{x}')}{p(\mathbf{x})} \frac{q(\mathbf{x}; \mathbf{x}')}{q(\mathbf{x}'; \mathbf{x})} \right)$\hspace{1em}};
+  \end{tikzpicture}
+}
+}
+
+
 \input{header}
 \usefonttheme[onlymath]{serif}
 \usepackage{multimedia} 
@@ -27,7 +49,7 @@
 \title{Markov Chain Monte Carlo}
 \author{Dustin Lang \\
 Perimeter Institute for Theoretical Physics}
-\date{PSI Numerical Methods 2024 \\
+\date{PSI Numerical Methods 2025 \\
   \vspace{1em}
 Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc} \\
   \vspace{1em}
@@ -125,7 +147,14 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 
 \dfmpage{30-34}
 
+\fixequation
 \dfmpage{35}
+
+\fixequation
+\dfmpage{36}
+
+\fixequation
+\dfmpage{37}
 
 % {
 % \setbeamercolor{background canvas}{bg=}
@@ -135,19 +164,26 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 % \end{tikzpicture}}]{dfm.pdf}
 % }
 
-\dfmpage{36-45}
+\dfmpage{38-39}
+
+\fixequationx
+\dfmpage{40}
+\fixequationx
+\dfmpage{41}
+
+\dfmpage{42-45}
 
 %\dfmpage{16}
 
-\begin{frame}{Note}
-\begin{itemize}
-\item In the previous slides, there is an unfortunate typo!  In all cases,
-\[ p(\textrm{accept}) = \min( 1, \frac{p(x)}{p(x')} \frac{q(x; x')}{q(x'; x)}) \]
-should actually be
-\[ p(\textrm{accept}) = \min( 1, \frac{p(x')}{p(x)} \frac{q(x'; x)}{q(x; x')}) \]
-That is, \alert{how good is the new place} divided by \alert{how good was the old place?}
-\end{itemize}
-\end{frame}
+% \begin{frame}{Note}
+% \begin{itemize}
+% \item In the previous slides, there is an unfortunate typo!  In all cases,
+% \[ p(\textrm{accept}) = \min( 1, \frac{p(x)}{p(x')} \frac{q(x; x')}{q(x'; x)}) \]
+% should actually be
+% \[ p(\textrm{accept}) = \min( 1, \frac{p(x')}{p(x)} \frac{q(x'; x)}{q(x; x')}) \]
+% That is, \alert{how good is the new place} divided by \alert{how good was the old place?}
+% \end{itemize}
+% \end{frame}
 
 \begin{frame}{About the name}
 \begin{itemize}

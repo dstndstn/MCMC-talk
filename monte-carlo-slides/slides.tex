@@ -1,0 +1,165 @@
+\pdfobjcompresslevel=1
+\documentclass{beamer}
+\usepackage{pdfpages}
+\usepackage{mathtools}
+%\usepackage{amsmath}
+\usepackage{tikz}
+%\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,placments,fit}
+\usetikzlibrary{arrows.meta,decorations.pathmorphing,backgrounds,positioning,fit}
+
+\usepackage{minted}
+
+%\usepackage{enumitem}
+
+%\usepackage[wby]{callouts}
+
+\newcommand{\dfmpage}[1]{
+{
+\setbeamercolor{background canvas}{bg=}
+\includepdf[pages=#1]{dfm.pdf}
+}
+}
+
+% DFM made a typo in the key Metropolis-Hastings acceptance probability, so patch those slides with an overlay!!
+
+\newcommand{\fixequation}{
+\AddToHookNext{shipout/foreground}{
+  \begin{tikzpicture}[overlay, remember picture]
+    %\draw[step=1cm] (0, 0) grid (10, -5);
+    \node[draw=none, fill=white, text=black, scale=1] at (6.7, -4) {%
+      $p( \textrm{accept} ) = \min \left( 1, \displaystyle\frac{p(\mathbf{x}')}{p(\mathbf{x})} \frac{q(\mathbf{x}; \mathbf{x}')}{q(\mathbf{x}'; \mathbf{x})} \right)$\hspace{1em}};
+  \end{tikzpicture}
+}
+}
+
+\newcommand{\fixequationx}{
+\AddToHookNext{shipout/foreground}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[draw=none, fill=white, text=black, scale=1] at (6.7, -5.2) {%
+      $p( \textrm{accept} ) = \min \left( 1, \displaystyle\frac{p(\mathbf{x}')}{p(\mathbf{x})} \frac{q(\mathbf{x}; \mathbf{x}')}{q(\mathbf{x}'; \mathbf{x})} \right)$\hspace{1em}};
+  \end{tikzpicture}
+}
+}
+
+\def\Put(#1,#2)#3{\leavevmode\makebox(0,0){\put(#1,#2){#3}}}
+
+\input{header}
+\usefonttheme[onlymath]{serif}
+\usepackage{multimedia} 
+
+\newcommand{\niceurl}[1]{\mbox{\href{#1}{\textsl{#1}}}}
+
+\title{Monte Carlo Methods}
+\author{Dustin Lang \\
+Perimeter Institute for Theoretical Physics}
+\date{PSI Numerical Methods 2026 \\
+  \vspace{1em}
+These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
+}
+
+%\setlist[itemize]{leftmargin=*}
+
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Monte Carlo}
+\begin{itemize}
+\item A set of computational approaches that \\
+uses \emph{repeated random simulations}
+\item Often: \emph{numerical integration}, \\
+\emph{optimization}, and \emph{sampling from \\
+probability distributions}
+\item \emph{Monte Carlo} is a casino in Monaco -- a reference to the \emph{randomness} used in
+these algorithms
+\item Developed at the very beginning of computing: 1940s, Los Alamos, nuclear bomb work
+(diffusion of neutrons in fissionable material)
+%\Put(10,50){\includegraphics[width=0.3\textwidth]{demoncore}}
+\item Compute \emph{Expectation values} over probability distributions:
+\item $\mathbb{E}(\phi(X)) = \int p(X) \phi(X) dX \sim \frac{1}{N} \sum_i^N \phi(X_i) $
+\end{itemize}
+
+\begin{tikzpicture}[remember picture,overlay]
+    \node[xshift=-2.1cm,yshift=-3cm] at (current page.north east){%
+    \includegraphics[width=4cm]{demoncore}};
+\end{tikzpicture}
+\end{frame}
+
+\begin{frame}{Monte Carlo: Examples}
+From \niceurl{https://en.wikipedia.org/wiki/Monte\_Carlo\_method}
+
+\begin{columns}
+\begin{column}{0.4\textwidth}
+\includegraphics[width=\textwidth]{Pi_monte_carlo_all-6}
+\end{column}
+\begin{column}{0.6\textwidth}
+    \setlength{\itemindent}{-2em}
+    \begin{itemize}%[leftmargin=*]
+    \item Monte Carlo estimator: $\hat{\theta} = \frac{1}{N} \sum_{i=1}^N \phi(x_i)$
+    \item Variance: $\textrm{var}(\hat{\theta}) = \frac{1}{N} \textrm{var}(\phi(X))$ \\
+    (of the \emph{distribution} $X$)
+    \item Sample v:  $\textrm{var}(\hat{\theta}) \simeq \frac{1}{N} \left( \frac{1}{N-1} \sum (\phi(x_i) - \hat{\theta})^2 \right)$
+    \item {\footnotesize see \niceurl{https://mpaldridge.github.io/math5835/lectures/L03-mc-error-1.html}
+    for proofs}
+    \end{itemize}
+\end{column}
+\end{columns}
+
+\end{frame}
+
+\begin{frame}{Monte Carlo examples: Path Tracing}
+\includegraphics[height=0.6\textwidth]{path-tracing} \\
+{\footnotesize Credit: Wikimedia, \niceurl{https://commons.wikimedia.org/wiki/File:Path\_tracing\_001.png}}
+\end{frame}
+
+\begin{frame}{Monte Carlo examples: Path Tracing}
+\includegraphics[height=0.6\textwidth]{Path-tracing-samples} \\
+{\footnotesize Credit: Wikimedia, \niceurl{https://en.wikipedia.org/wiki/Path\_tracing\#/media/File:Path\_tracing\_sampling\_values.png}}
+\end{frame}
+
+\begin{frame}{Monte Carlo examples: Quantum Monte Carlo}
+\begin{itemize}
+\item Dealing with multi-particle wavefunctions often involves many-dimensional integrals
+\item \emph{The Curse of Dimensionality}
+\item Variational Monte Carlo: uses Monte Carlo sampling of electron positions in real space
+to estimate the ground-state wavefunction, given a Hamiltonian
+\item Parameterized wavefunction $|\psi(a)\rangle$
+\item Estimate $E(a) = \frac{\langle \psi(a) | H | \psi(a) \rangle}{\langle \psi(a) | \psi(a) \rangle}$
+\item ie, the integral $E(a) = \frac{\int | \psi(X, a) |^2 \frac{H \psi(X, a)}{\psi(X,a)} dX}%
+      {\int | \psi(X, a) |^2 dX}$
+\end{itemize}
+\begin{tikzpicture}[remember picture,overlay]
+    \node[xshift=-1.1cm,yshift=2cm] at (current page.south east){%
+    \includegraphics[width=0.2\textwidth]{benzene}\\
+    {\tiny From \niceurl{https://doi.org/10.1134/S2070048220020106}}};
+\end{tikzpicture}
+%\includegraphics[width=0.2\textwidth]{benzene}
+%{\tiny From \niceurl{https://doi.org/10.1134/S2070048220020106}}
+\end{frame}
+
+\begin{frame}{Monte Carlo examples: Quantum Monte Carlo}
+\begin{itemize}
+\item ie, the integral $E(a) = \frac{\int | \psi(X, a) |^2 \frac{H \psi(X, a)}{\psi(X,a)} dX}%
+      {\int | \psi(X, a) |^2 dX}$
+\item Treat this term as a probability distribution \\
+function: $p(X) = \frac{| \psi(X, a) |^2}{\int | \psi(X, a) |^2 dX}$
+\item Then we've got $E(a) = \int p(X) \frac{H \psi(X,a)}{\psi(X,a)}  dX$
+\item Monte Carlo it!
+\item $E(a) \simeq \frac{1}{N} \sum \frac{H \psi(X_i, a)}{\psi(X_i, a)}$
+\item with $X_i$ drawn from the \\
+``trial wavefunction'' $\psi(a)$
+\end{itemize}
+\begin{tikzpicture}[remember picture,overlay]
+    \node[xshift=-1.1cm,yshift=2cm] at (current page.south east){%
+    \includegraphics[width=0.2\textwidth]{benzene}\\
+    {\tiny From \niceurl{https://doi.org/10.1134/S2070048220020106}}};
+\end{tikzpicture}
+%\includegraphics[width=0.2\textwidth]{benzene}
+%{\tiny From \niceurl{https://doi.org/10.1134/S2070048220020106}}
+\end{frame}
+
+
+\end{document}
+

@@ -380,7 +380,7 @@ function mcmc(logprob_func, propose_func, initial_pos, nsteps)
         # compute probability at new position
         logprob_new = logprob_func(p_new)
         # decide whether to jump to the new position
-        ratio = exp(prob_new - prob)
+        ratio = exp(logprob_new - logprob)
         if ratio > 1 or ratio > uniform_random()
             p = p_new
             logprob = logprob_new
@@ -424,8 +424,9 @@ end
 
 
 
+\begin{frame}{Using the MCMC algorithm}
 
-
+\end{frame}
 
 
 
@@ -446,19 +447,19 @@ end
 
 \dfmpage{59-62}
 
-\begin{frame}{A connection to symmetries}
-\begin{itemize}
-\item In Metropolis--Hastings MCMC, the \emph{proposal distribution} needs
-\alert{tuning parameters}, especially as dimensionality increases
-\item Can be seen as a lack of \alert{symmetry} in the algorithm---the algorithm is
-sensitive to the parameterization of the problem
-\item For example, it's not invariant to an \alert{affine} transformation
-\item \alert{Next lecture}, I'll show you an alternative algorithm that \alert{does} have affine invariance
-\end{itemize}
-\begin{center}
-\includegraphics[width=0.6\textwidth]{hardeasy}
-\end{center}
-\end{frame}
+% \begin{frame}{A connection to symmetries}
+% \begin{itemize}
+% \item In Metropolis--Hastings MCMC, the \emph{proposal distribution} needs
+% \alert{tuning parameters}, especially as dimensionality increases
+% \item Can be seen as a lack of \alert{symmetry} in the algorithm---the algorithm is
+% sensitive to the parameterization of the problem
+% \item For example, it's not invariant to an \alert{affine} transformation
+% \item \alert{Next lecture}, I'll show you an alternative algorithm that \alert{does} have affine invariance
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{hardeasy}
+% \end{center}
+% \end{frame}
 
 
 \begin{frame}{How many samples do I need?}

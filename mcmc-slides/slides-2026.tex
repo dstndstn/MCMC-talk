@@ -1,0 +1,473 @@
+\pdfobjcompresslevel=1
+\documentclass{beamer}
+\usepackage{pdfpages}
+\usepackage{mathtools}
+%\usepackage{amsmath}
+\usepackage{tikz}
+%\usetikzlibrary{arrows,decorations.pathmorphing,backgrounds,placments,fit}
+\usetikzlibrary{arrows.meta,decorations.pathmorphing,backgrounds,positioning,fit}
+
+\usepackage{minted}
+
+%\usepackage[wby]{callouts}
+
+\newcommand{\dfmpage}[1]{
+{
+\setbeamercolor{background canvas}{bg=}
+\includepdf[pages=#1]{dfm.pdf}
+}
+}
+
+% DFM made a typo in the key Metropolis-Hastings acceptance probability, so patch those slides with an overlay!!
+
+\newcommand{\fixequation}{
+\AddToHookNext{shipout/foreground}{
+  \begin{tikzpicture}[overlay, remember picture]
+    %\draw[step=1cm] (0, 0) grid (10, -5);
+    \node[draw=none, fill=white, text=black, scale=1] at (6.7, -4) {%
+      $p( \textrm{accept} ) = \min \left( 1, \displaystyle\frac{p(\mathbf{x}')}{p(\mathbf{x})} \frac{q(\mathbf{x}; \mathbf{x}')}{q(\mathbf{x}'; \mathbf{x})} \right)$\hspace{1em}};
+  \end{tikzpicture}
+}
+}
+
+\newcommand{\fixequationx}{
+\AddToHookNext{shipout/foreground}{
+  \begin{tikzpicture}[overlay, remember picture]
+    \node[draw=none, fill=white, text=black, scale=1] at (6.7, -5.2) {%
+      $p( \textrm{accept} ) = \min \left( 1, \displaystyle\frac{p(\mathbf{x}')}{p(\mathbf{x})} \frac{q(\mathbf{x}; \mathbf{x}')}{q(\mathbf{x}'; \mathbf{x})} \right)$\hspace{1em}};
+  \end{tikzpicture}
+}
+}
+
+
+\input{header}
+\usefonttheme[onlymath]{serif}
+\usepackage{multimedia} 
+
+\newcommand{\niceurl}[1]{\mbox{\href{#1}{\textsl{#1}}}}
+
+\title{Markov Chain Monte Carlo}
+\author{Dustin Lang \\
+Perimeter Institute for Theoretical Physics}
+\date{PSI Numerical Methods 2026 \\
+  \vspace{1em}
+Borrowing heavily from Dan Foreman-Mackey's slides \niceurl{https://speakerdeck.com/dfm/data-analysis-with-mcmc} \\
+  \vspace{1em}
+These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
+}
+\begin{document}
+
+\begin{frame}
+\titlepage
+\end{frame}
+
+\begin{frame}{Context - Generative data analysis}
+  \begin{itemize}
+  \item In Astrophysics, often have a \emph{generative model} of a phenomenon of interest:
+  \item We can \emph{simulate} or \emph{predict} what we will observe with a \emph{model}
+  \item The model has \emph{parameters}, and we want to put \emph{constraints} on these parameters:
+  \item \emph{What range of parameters are consistent with our observations?}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Context - Generative data analysis}
+  \begin{itemize}
+  \item We can \emph{simulate} or \emph{predict} what we will observe with a \emph{parameterized model}: $\hat{y}_i = f(\theta, x_i)$
+  \item We can write down a \emph{likelihood} of getting the observations we got: $\mathcal{L}(y_i | x_i, \theta) = g(y_i, \hat{y}_i, \theta)$
+  \item Eg, Gaussian likelihoods:
+        %$\mathcal{L}(y_i | x_i, \theta) = \frac{1}{\sqrt{2 \pi} \sigma_i} \exp\left( \frac{(y_i - \hat{y}_i)^2}{-2 \sigma_i^2} \right)$
+        $\mathcal{L}(y_i | x_i, \theta) = \frac{1}{\sqrt{2 \pi} \sigma_i} \exp\left( - \frac{(y_i - f(\theta, x_i))^2}{2 \sigma_i^2} \right)$
+  \item \emph{Note:} after we have made our observations, $y_i$ are fixed, as are $x_i$, $\sigma_i$ (and $f$ and $g$); only parameters $\theta$ are free
+  \item We want to know about constraints on our \emph{parameters} $\theta$!
+  \item \emph{Bayes' theorem} lets us do this: $p(\theta | y_i, x_i) = \frac{\mathcal{L}(y_i | x_i, \theta) p(\theta)}{p(y_i)}$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Context - Generative data analysis}
+  \begin{itemize}
+  \item \emph{Bayes' theorem} lets us do this: $p(\theta | y_i, x_i) = \frac{\mathcal{L}(y_i | x_i, \theta) p(\theta)}{p(y_i)}$
+  \item \emph{Usually} we don't care about the $p(y_i)$ (``evidence'') term
+  \item \emph{Often} we want the $p(\theta)$ (``prior'') term to be ``uninformative'' (that's not trivial)
+  \item So, we usually want to \emph{draw samples} from the \emph{posterior distribution} $p(\theta | y_i, x_i)$;
+  that's what we report in our paper
+  \item (given samples, we can draw \emph{contours}):
+  \end{itemize}
+  \includegraphics[height=0.3\textheight]{desi-bao-2}
+  \includegraphics[height=0.3\textheight]{desi-cosmo}
+\end{frame}
+
+
+\dfmpage{30-34}
+
+\fixequation
+\dfmpage{35}
+
+\fixequation
+\dfmpage{36}
+
+\fixequation
+\dfmpage{37}
+
+% {
+% \setbeamercolor{background canvas}{bg=}
+% \includepdf[pages=35,pagecommand={%
+% \begin{tikzpicture}%
+% (0,0) node(x) {Hello World!}
+% \end{tikzpicture}}]{dfm.pdf}
+% }
+
+\dfmpage{38-39}
+
+\fixequationx
+\dfmpage{40}
+\fixequationx
+\dfmpage{41}
+
+\dfmpage{42-45}
+
+%\dfmpage{16}
+
+% \begin{frame}{Note}
+% \begin{itemize}
+% \item In the previous slides, there is an unfortunate typo!  In all cases,
+% \[ p(\textrm{accept}) = \min( 1, \frac{p(x)}{p(x')} \frac{q(x; x')}{q(x'; x)}) \]
+% should actually be
+% \[ p(\textrm{accept}) = \min( 1, \frac{p(x')}{p(x)} \frac{q(x'; x)}{q(x; x')}) \]
+% That is, \alert{how good is the new place} divided by \alert{how good was the old place?}
+% \end{itemize}
+% \end{frame}
+
+\begin{frame}{About the name}
+\begin{itemize}
+\item \alert{Monte Carlo}: a reference to the famous Monte Carlo Casino in Monaco, alluding to the randomness used in the algorithm
+\item \alert{Markov Chain}: a list of samples, where each one is generated by a process that only looks at the previous one.
+\item \alert{Markov}: a 19th-centure Russian mathematician and impressive-moustache-haver
+with an \href{https://en.wikipedia.org/wiki/List_of_things_named_after_Andrey_Markov}{\textcolor{blue}{extensive list of things named after him}}
+\item \alert{Metropolis--Hastings}: lead authors of 1953 and 1970 papers (resp.) giving the algorithm with symmetric and general proposal distributions (resp.)
+\end{itemize}
+\end{frame}
+
+% \begin{frame}[containsverbatim]{The Algorithm}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(prob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      prob = prob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          prob_new = prob_func(p_new)
+%          # decide whether to jump to the new position
+%          #...
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{small}
+% \end{frame}
+
+%%%%% PYTHON %%%%%
+
+% \begin{frame}[fragile]{The Algorithm (1)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(prob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      prob = prob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          # ...
+%          # compute probability at new position
+%          # ...
+%          # decide whether to jump to the new position
+%          if # ...
+%              # ...
+%              # ...
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{small}
+% \end{frame}
+% 
+% \begin{frame}[fragile]{The Algorithm (2)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(prob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      prob = prob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          prob_new = prob_func(p_new)
+%          # decide whether to jump to the new position
+%          if prob_new / prob > uniform_random():
+%              p = p_new
+%              prob = prob_new
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{small}
+% \end{frame}
+% 
+% \begin{frame}[fragile]{The Algorithm (3)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(logprob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      logprob = logprob_func(p)
+%      chain = []
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          logprob_new = logprob_func(p_new)
+%          # decide whether to jump to the new position
+%          if exp(logprob_new - logprob) > uniform_random():
+%              p = p_new
+%              logprob = logprob_new
+%          # save the position
+%          chain.append(p)
+%      return chain
+% \end{minted}
+% \end{small}
+% \end{frame}
+% 
+% \begin{frame}[fragile]{The Algorithm (4)}
+% \begin{small}
+% \begin{minted}{python}
+% def mcmc(logprob_func, propose_func, initial_pos, nsteps):
+%      p = initial_pos
+%      logprob = logprob_func(p)
+%      chain = []
+%      naccept = 0
+%      for i in range(nsteps):
+%          # propose a new position in parameter space
+%          p_new = propose_func(p)
+%          # compute probability at new position
+%          logprob_new = logprob_func(p_new)
+%          # decide whether to jump to the new position
+%          if exp(logprob_new - logprob) > uniform_random():
+%              p = p_new
+%              logprob = logprob_new
+%              naccept += 1
+%          # save the position
+%          chain.append(p)
+%      return chain, naccept/nsteps
+% \end{minted}
+% \end{small}
+% \end{frame}
+
+
+\begin{frame}[fragile]{The Algorithm (1)}
+\begin{footnotesize}
+\begin{minted}{julia}
+function mcmc(prob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    prob = prob_func(p)
+    chain = []
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        # ...
+        # compute probability at new position
+        # ...
+        # decide whether to jump to the new position
+        # ...
+        if # ...
+            # ...
+            # ...
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain
+end
+\end{minted}
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}[fragile]{The Algorithm (2)}
+\begin{footnotesize}
+\begin{minted}{julia}
+function mcmc(prob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    prob = prob_func(p)
+    chain = []
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        p_new = propose_func(p)
+        # compute probability at new position
+        prob_new = prob_func(p_new)
+        # decide whether to jump to the new position
+        ratio = prob_new / prob
+        if ratio > 1 or ratio > uniform_random()
+            p = p_new
+            prob = prob_new
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain
+end
+\end{minted}
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}[fragile]{The Algorithm (3)}
+\begin{footnotesize}
+\begin{minted}{julia}
+function mcmc(logprob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    logprob = logprob_func(p)
+    chain = []
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        p_new = propose_func(p)
+        # compute probability at new position
+        logprob_new = logprob_func(p_new)
+        # decide whether to jump to the new position
+        ratio = exp(logprob_new - logprob)
+        if ratio > 1 or ratio > uniform_random()
+            p = p_new
+            logprob = logprob_new
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain
+end
+\end{minted}
+\end{footnotesize}
+\end{frame}
+
+\begin{frame}[fragile]{The Algorithm (4)}
+\begin{scriptsize}
+\begin{minted}{julia}
+function mcmc(logprob_func, propose_func, initial_pos, nsteps)
+    p = initial_pos
+    logprob = logprob_func(p)
+    chain = []
+    naccept = 0
+    for i in 1:nsteps
+        # propose a new position in parameter space
+        p_new = propose_func(p)
+        # compute probability at new position
+        logprob_new = logprob_func(p_new)
+        # decide whether to jump to the new position
+        if exp(prob_new - prob) > uniform_random()
+            p = p_new
+            logprob = logprob_new
+            naccept += 1
+        end
+        # save the position
+        append!(chain, p)
+    end
+    return chain, naccept/nsteps
+end
+\end{minted}
+\end{scriptsize}
+\end{frame}
+
+
+
+% \begin{frame}{Using the MCMC algorithm}
+% \end{frame}
+
+
+
+
+%
+%
+%
+
+
+\begin{frame}{Practicalities}
+\begin{itemize}
+\item How do I choose a proposal distribution?
+\item How many steps do I have to take?
+\end{itemize}
+\end{frame}
+
+\dfmpage{46-54}
+
+\dfmpage{59-62}
+
+% \begin{frame}{A connection to symmetries}
+% \begin{itemize}
+% \item In Metropolis--Hastings MCMC, the \emph{proposal distribution} needs
+% \alert{tuning parameters}, especially as dimensionality increases
+% \item Can be seen as a lack of \alert{symmetry} in the algorithm---the algorithm is
+% sensitive to the parameterization of the problem
+% \item For example, it's not invariant to an \alert{affine} transformation
+% \item \alert{Next lecture}, I'll show you an alternative algorithm that \alert{does} have affine invariance
+% \end{itemize}
+% \begin{center}
+% \includegraphics[width=0.6\textwidth]{hardeasy}
+% \end{center}
+% \end{frame}
+
+
+\begin{frame}{How many samples do I need?}
+\begin{itemize}
+\item Burn-in --- skip the first $N$ samples
+\item \emph{Has my chain converged?}
+\item MCMC produces \alert{correlated} samples, so
+  \begin{itemize}
+  \item How correlated are my samples?
+  \onslide<2->{
+  \begin{itemize}
+  \addtolength{\itemsep}{0.5ex}%
+  \item Can measure the \emph{autocorrelation time} $\tau$
+  \item Keep $1/\tau$ of the MCMC samples
+  \item eg \niceurl{https://github.com/dfm/acor}
+  \end{itemize}
+  }
+  \item How many uncorrelated samples do I need?
+  \onslide<3->{
+  \begin{itemize}
+  \addtolength{\itemsep}{0.5ex}%
+  \item No easy general answer to this question!
+  \item ``How many can you afford?''
+  \end{itemize}
+  }
+  \end{itemize}
+\end{itemize}
+\end{frame}
+
+%\dfmpage{29}
+
+
+\begin{frame}{Conclusions}
+\begin{itemize}
+  \addtolength{\itemsep}{0.5ex}%
+\item MCMC remains an essential tool for probabilistic inference
+\item For science: lets us contrain model parameters based on data (Bayesian inference)
+\item Beguilingly simple algorithm, but difficult practicalities %(with some pitfalls!)
+%\item A good proposal function can be hard to come up with! (and is essential for good performance!)
+\item MCMC has beautiful theoretical guarantees... as compute time $\to \infty$
+\end{itemize}
+\end{frame}
+
+
+
+% \begin{frame}{This afternoon's tutorial/lab session}
+% \begin{itemize}
+% \item Bob Room, 3:15--4:30
+% \item Time to play with MCMC yourself!
+% \item We'll use Google CoLab - no need to install anything on your computer
+% \item In the Python language
+% \end{itemize}
+% \end{frame}
+
+
+
+
+\end{document}
+

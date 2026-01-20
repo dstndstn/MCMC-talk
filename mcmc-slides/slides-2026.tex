@@ -74,7 +74,7 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 \begin{frame}{Context - Generative data analysis}
   \begin{itemize}
   \item We can \emph{simulate} or \emph{predict} what we will observe with a \emph{parameterized model}: $\hat{y}_i = f(\theta, x_i)$
-  \item We can write down a \emph{likelihood} of getting the observations we got: $\mathcal{L}(y_i | x_i, \theta) = g(y_i, \hat{y}_i, \theta)$
+  \item We can write down a \emph{likelihood} of getting the observations we got: $\mathcal{L}(y_i | x_i, \theta) = g(y_i, x_i, \theta)$
   \item Eg, Gaussian likelihoods:
         %$\mathcal{L}(y_i | x_i, \theta) = \frac{1}{\sqrt{2 \pi} \sigma_i} \exp\left( \frac{(y_i - \hat{y}_i)^2}{-2 \sigma_i^2} \right)$
         $\mathcal{L}(y_i | x_i, \theta) = \frac{1}{\sqrt{2 \pi} \sigma_i} \exp\left( - \frac{(y_i - f(\theta, x_i))^2}{2 \sigma_i^2} \right)$
@@ -86,15 +86,16 @@ These slides are available at \niceurl{https://github.com/dstndstn/MCMC-talk}%
 
 \begin{frame}{Context - Generative data analysis}
   \begin{itemize}
-  \item \emph{Bayes' theorem} lets us do this: $p(\theta | y_i, x_i) = \frac{\mathcal{L}(y_i | x_i, \theta) p(\theta)}{p(y_i)}$
-  \item \emph{Usually} we don't care about the $p(y_i)$ (``evidence'') term
+  \item \emph{Bayes' theorem} lets us do this: $p(\theta | \{y_i\}, \{x_i\}) = \frac{\mathcal{L}(\{y_i\} | \{x_i\}, \theta) p(\theta)}{p(\{y_i\})}$
+  \item \emph{Usually} we don't care about the $p(\{y_i\})$ (``evidence'') term
   \item \emph{Often} we want the $p(\theta)$ (``prior'') term to be ``uninformative'' (that's not trivial)
-  \item So, we usually want to \emph{draw samples} from the \emph{posterior distribution} $p(\theta | y_i, x_i)$;
+  \item So, we usually want to \emph{draw samples} from the \emph{posterior distribution} $p(\theta | \{y_i\}, \{x_i\})$;
   that's what we report in our paper
-  \item (given samples, we can draw \emph{contours}):
+  \item (given samples, we can draw \emph{contours} of the probability distribution):
   \end{itemize}
   \includegraphics[height=0.3\textheight]{desi-bao-2}
-  \includegraphics[height=0.3\textheight]{desi-cosmo}
+  \includegraphics[height=0.3\textheight]{desi-cosmo} \\
+  {\footnotesize From \niceurl{https://arxiv.org/abs/2503.14738}}
 \end{frame}
 
 
